@@ -1,0 +1,8 @@
+{
+  "name": "pizza_delivery_api",
+  "version": "1.0.0",
+  "description": "pirple.com Node JS Masterclass 2nd Assignment",
+  "main": "index.js",
+  "author": "Derrick Mbarani",
+  "license": "MIT"
+}
