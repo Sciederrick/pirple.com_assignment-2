@@ -4,5 +4,8 @@
   "description": "pirple.com Node JS Masterclass 2nd Assignment",
   "main": "index.js",
   "author": "Derrick Mbarani",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "stripe": "^8.135.0"
+  }
 }
