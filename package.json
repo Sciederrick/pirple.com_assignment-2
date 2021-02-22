@@ -6,6 +6,7 @@
   "author": "Derrick Mbarani",
   "license": "MIT",
   "dependencies": {
+    "mailgun-js": "^0.22.0",
     "stripe": "^8.135.0"
   }
 }
