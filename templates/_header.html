@@ -1,0 +1,67 @@
+<html lang="en">
+    <head>
+        <!-- General Settings -->
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <meta http-equiv="content-language" content="en-us">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <base href="{global.baseUrl}"/>
+        <!-- Meta tags -->
+        <title>{head.title} | {global.appName}</title>
+        <meta name="description" content="{head.description}">
+        <!-- Static Assets -->
+        <link href="public/icons/css/fontawesome.min.css" rel="stylesheet">
+        <link href="public/icons/css/brands.min.css" rel="stylesheet">
+        <link href="public/icons/css/solid.min.css" rel="stylesheet">
+        <link type="image/x-icon" rel="icon" href="favicon.ico">
+        <script type="text/javascript" charset="UTF-8" src="public/app.js"></script>
+        <link rel="stylesheet" type="text/css" href="public/app.css"/>
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="public/site.webmanifest">
+    </head>
+    <body class="{body.class}">
+       <!-- Page Wrapper  -->
+       <div class="wrapper">
+        <!-- Header -->
+        <div class="header">
+             <!-- Logo -->
+             <a class="logo" href="/">
+                 <img src="public/logo.png" alt="logo"/>
+             </a>
+             <!-- Navigation -->
+             <ul class="menu">
+                 <li>
+                   <a href="/">Home</a>
+                 </li>
+                 <li class="loggedOut">
+                   <a href="/account/create">Signup</a>
+                 </li>
+                 <li class="loggedOut">
+                   <a href="/session/create">Login</a>
+                 </li>
+                 <li class="logo">
+                  <p>Lets eat!</p>
+                  <a class="logo" href="/">
+                    <img src="public/logo.png" alt="logo"/>
+                  </a>
+                 </li>
+                 <li class="loggedIn">
+                   <a href="/checks/all">Dashboard</a>
+                 </li>
+                 <li class="loggedIn">
+                   <a href="/account/edit">Account Settings</a>
+                 </li>
+                 <li class="loggedIn">
+                   <a href="#" id="logoutButton">Logout</a>
+                 </li>
+            </ul>
+            <!-- Hamburger Button -->
+            <button class="bars">
+              <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Page Specific Content -->
+        <div class="content">

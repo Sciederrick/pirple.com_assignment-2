@@ -1,0 +1,253 @@
+	:root{
+		/*Color Palette (Pizza Leafy Toppings)*/
+		--green: #597525;
+		--mimosa: #ECD393;
+		--ivory: #EFF0EA;
+		--tigerLily: #A5331D;
+		/*Font*/
+		--sm-font: 16px;
+		--md-font: 20px;
+		--lg-font: 26px;
+		--menu: 16px;
+	}
+	
+	/* Resets */
+	ul{
+		list-style-type: none;
+	}
+	button{
+		border: none;
+		cursor: pointer;
+	}
+
+	/* width */
+	::-webkit-scrollbar {
+		width: 6px;
+	}
+	/* Track */
+	::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 5px var(--tigerLily);
+	}
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		border-radius: 10px;
+		background: var(--mimosa);  
+	}
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--green);
+	}
+
+	/* For mobile phones: */
+	html{
+		font-size: var(--sm-font);
+		background-color: var(--tigerLily);
+	}
+	h1{
+		font-size: 23px;
+	}
+	h2{
+		font-size: 20px;
+	}
+	.header{
+		height: 3rem;
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: baseline;
+	}
+	button.bars{
+		background-color: transparent;
+		font-size: 1.7rem;
+	}
+	.fa-bars{
+		color: var(--ivory)
+	}
+	.menu{
+		display: none;
+	}
+	.index .content{
+		padding-top: 4rem;
+	}
+	.index h1, .index h2, .sessionCreate h1, .sessionCreate h2{
+		padding: 4px 0;
+		color: var(--mimosa);
+		text-align: center;
+	}
+	.index div.cta{
+		width: 100px;
+		margin:60px auto;
+	}
+	.index button.cta{
+		margin: auto;
+		padding: 8px 12px;
+		border-radius: 5px;
+		background-color: var(--ivory);
+		color: var(--tigerLily);
+		font-size: var(--md-font);
+		font-family: Arial, Helvetica, sans-serif;
+	}
+	.index div.cover{
+		border-radius: 20px;
+		width: 80%;
+		height: 250px;
+		margin: auto;
+		background: var(--tigerLily) url('./pizza-cover.png') no-repeat center scroll;
+	}
+	.sessionCreate .content{
+		padding-top: 2rem;
+	}
+	.sessionCreate h1, .sessionCreate h2, .index h1, .index h2{
+		width: 87%;
+		margin:auto;
+	}	
+	.formWrapper {
+		margin: 0 auto;
+		width: 99%;
+		height: 60%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	form{
+		width: 100%;
+		display: flex;
+		flex-direction: column;   
+	}
+	.inputWrapper{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 5px 0px;
+	}
+	.inputWrapper input, .inputWrapper button{
+		width: 90%;
+		padding: 10px 2px;
+		border-radius: 10px;
+		border-color: transparent;
+	}
+	.inputWrapper > button{
+		border-radius: 6px;
+		padding: 10px 20px;
+		margin: 5px 5%;
+		width: auto;
+		align-self: flex-end;
+		background-color: var(--green);
+		color: var(--ivory);
+		font-size: var(--sm-font);
+	}
+	.inputLabel{
+		width: 90%;
+		padding: 4px 1px;
+		color: var(--ivory);
+	}
+	.footer{
+		width: 100%;
+		margin-top: 20px;
+		padding: 10px 4px;
+		font-size: 0.8rem;
+	}
+  
+  @media only screen and (min-width: 600px) {
+	/* For tablets: */
+		html{
+			font-size: var(--md-font);
+		}
+		h1{
+			font-size: 26px;
+		}
+		h2{
+			font-size: 22px;
+		}
+		.sessionCreate h1, .sessionCreate h2, .index h1, .index h2{
+			width: 67%;
+		}	
+		.formWrapper{
+			width: 75%;
+		}
+  }
+  
+  @media only screen and (min-width: 768px) {
+	/* For desktop: */
+		.sessionCreate h1, .sessionCreate h2{
+			width: 47%;
+		}	
+		.formWrapper{
+			width: 55%;
+		}
+  }
+
+	@media only screen and (min-width: 1024px){
+	/* Large Desktop */
+		button.bars{
+			display: none;
+		}
+		.header{
+			justify-content: center;
+		}
+		.header > .logo{
+			display: none;
+		}
+		.menu{
+			width: 80%;
+			margin: auto;
+			display: flex;
+			justify-content: space-between;
+			font-size: var(--menu);
+			padding: 2px 3px;
+		}
+		ul.menu li.logo{
+			margin: 0 15%;
+			align-self: flex-start;
+			text-align: center;
+			color: var(--ivory);
+			font-family: cursive;
+			font-size: var(--md-font);
+		}
+		ul.menu li.logo > p{
+			margin-top: 3px;
+			margin-bottom: 5px;
+		}
+		ul.menu li{
+			padding-right: 10px;
+			align-self: center;
+		}
+		ul.menu li a{
+			text-decoration: none;
+			font-family: Arial, Helvetica, sans-serif;
+			color: var(--ivory);
+		}
+		.index h1, .index h2{
+			width: 50%;
+		}
+		.index .content{
+			padding-top: 5rem;
+		}
+		.index div.cover{
+			width: 45%;
+			height: 300px;
+		}
+		.index div.cta{
+			width: 150px;
+		}
+		.index button.cta{
+			font-size: var(--lg-font);
+		}
+		.sessionCreate .content{
+			padding-top: 5.5rem;
+		}
+		.sessionCreate h1, .sessionCreate h2, .index h1, .index h2{
+			width: 44%;
+		}
+		.formWrapper{
+			width: 50%;
+		}
+		.inputWrapper > button{
+			border-radius: 6px;
+			padding: 8px 20px;
+			margin: 12px 5%;
+			align-self: flex-start;
+			font-size: var(--md-font);
+		}
+	}
