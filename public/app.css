@@ -18,6 +18,11 @@
 	button{
 		border: none;
 		cursor: pointer;
+		margin: auto;
+		padding: 8px 12px;
+		border-radius: 5px;
+		font-size: var(--sm-font);
+		font-family: Arial, Helvetica, sans-serif;
 	}
 
 	/* width */
@@ -43,6 +48,10 @@
 		font-size: var(--sm-font);
 		background-color: var(--tigerLily);
 	}
+	body{
+		margin:0;
+		overflow-x: hidden;
+	}
 	h1{
 		font-size: 23px;
 	}
@@ -60,12 +69,39 @@
 	button.bars{
 		background-color: transparent;
 		font-size: 1.7rem;
+		z-index: 2;
+		margin:0;
 	}
 	.fa-bars{
-		color: var(--ivory)
+		color: var(--ivory);
+	}
+	.fa-times{
+		color: var(--tigerLily);
 	}
 	.menu{
 		display: none;
+	}
+	.navMobile{
+		position: fixed;
+		top:0;
+		left:0;
+		right:0;
+		width: 100%;
+		margin: auto;
+		display: flex;
+		flex-direction: column;
+		font-size: var(--menu);
+		padding: 10vh 0;
+		background-color: var(--green);
+	}
+	ul.navMobile li{
+		padding: 25px 0 25px 20vw;
+		align-self: flex-start;
+	}
+	ul.navMobile li a{
+		text-decoration: none;
+		font-family: Arial, Helvetica, sans-serif;
+		color: var(--ivory);
 	}
 	.formWrapper {
 		margin: 0 auto;
@@ -153,6 +189,9 @@
 		margin: auto;
 		background: var(--tigerLily) url('./pizza-cover.png') no-repeat center scroll;
 	}
+	.index .loggedIn, .sessionCreate .loggedIn, .accountCreate .loggedIn{
+		display: none;
+	}
 	.sessionCreate .content, .accountCreate .content{
 		padding-top: 2rem;
 	}
@@ -163,19 +202,24 @@
 	.sessionCreate .formWrapper{
 		height: 60%;
 	}
-	.pizzaContainer{
-		margin: 40px -7px;
+	.menuList .loggedOut,.shoppingCart .loggedOut{
+		display: none;
+	}
+	.pizzaContainer, .cartContainer{
+		width: 100%;
+		margin: 40px 0;
 		min-height: 55vh;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: flex-start;
+		padding-left: 5px;
 		align-items: baseline;
 		background-color: var(--ivory);
 	}
 	.pizza{
 		border-bottom: 1px solid var(--tigerLily);
 		width: 99%;
-		height: 120px;
+		height: 160px;
 		margin: 5px 0.5%;
 		padding: 2px;
 		display: grid;
@@ -197,9 +241,103 @@
 		height: 95px;
 		width: 95px;
 	}
-  
-  @media only screen and (min-width: 600px) {
-	/* For tablets: */
+	.cartItem{
+		display: flex;
+		flex-direction: column;	
+		width: 100%;	
+		margin: auto;
+		padding: 1rem .5rem;
+		border-bottom: 1px solid var(--tigerLily)
+	}
+	.cartItem .product{
+		display: flex;
+		width: 100%;
+	}
+    .productImage{
+		width: 29%;
+		display: flex;
+		justify-content: center;
+		align-content: center;
+	}
+	.productImage img{
+		border-radius: 100%;
+		height: 95px;
+		width: 95px;
+	}
+	.productDescription{
+		width: 70%;
+	}
+	.productDescription h3, .productDescription h4, .productDescription p{
+		margin: 0;
+		padding-bottom: .5rem;
+	}
+	.cartItem .sale{
+		display: flex;
+		width: 100%;
+	}
+	.sale .price{
+		width: 29%;
+	}
+	.sale .quantity{
+		width: 70%;
+	}
+	.price > p, .quantity > p{
+        margin: .5rem 0;
+	}
+	.price > p{
+		padding-left: .6rem;
+	}
+	.checkoutContainer{
+		overflow-x: hidden;
+	}
+	.checkout{
+		display: flex;
+		width: 99%;
+		margin: auto;
+		justify-content: space-evenly;
+		padding: 1rem .5rem;
+		background-color: var(--mimosa);
+	}
+	.checkout .other{
+		padding-left: 5px;
+	}
+	.checkout .other{
+		padding-right: 13px;
+	}
+	.checkout div{
+		margin: 1rem 0;
+	}
+	button#checkout{
+		background-color: var(--green);
+		color: var(--ivory);
+	}
+	div.addToCart{
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+	}
+	div.addToCart input[type='number']{
+		margin-right: 30px;
+	}
+	button.addToCart, button.removeFromCart{
+		margin: 4px 0;
+		font-size: 0.8rem;
+		border-radius: 2px;
+	}
+	button.addToCart{
+		background-color: var(--green);
+		color: var(--ivory);
+	}
+	button.removeFromCart{
+		background-color: var(--mimosa);
+		color: var(--tigerLily);
+		text-decoration: underline;
+		font-size: 0.7rem;
+		display: none;
+	}
+	
+	@media only screen and (min-width: 600px) {
+		/* For tablets: */
 	html{
 		font-size: var(--md-font);
 	}
@@ -208,6 +346,9 @@
 	}
 	h2{
 		font-size: 22px;
+	}
+	ul.navMobile li{
+		border-bottom: 1px solid var(--mimosa);
 	}
 	.formWrapper{
 		width: 75%;
@@ -222,9 +363,16 @@
 		margin-top: 60px;
 	}
 	.pizza{
-		height: 150px;
+		height: 200px;
 		width: 72%;
 		margin: auto;
+	}
+	.cartItem{
+		margin: 0 11vw;
+	}
+	.productImage img{
+		height: 110px;
+		width: 110px;
 	}
   }
   
@@ -237,15 +385,46 @@
 		width: 47%;
 	}	
 	.pizza{
-		height: 170px;
+		height: 220px;
 		width: 48%;
 		margin: 5px 0.5%;
 	}
+	.cartItem{
+		flex-direction: row;
+		margin: auto;
+		align-items: flex-start;
+	}
+	.cartItem .product{
+		width: 59vw;
+	}
+	.cartItem .sale{
+		width: 40vw;
+	}
+	.sale .price, .sale .quantity{
+		min-height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	.sale .price > p:first-child, .sale .quantity > p:first-child{
+        margin-bottom: 2.5rem;
+	}
+	.sale .price{
+		width: 50%;
+		padding-left: 2rem;
+	}
+	.sale .quantity{
+		width: 50%;
+		padding-left: 2rem;
+	}
+	button#checkout{
+		font-size: var(--md-font);
+	}
+	
   }
 
 	@media only screen and (min-width: 1024px){
 	/* Large Desktop */
-		button.bars{
+		button.bars, .navMobile{
 			display: none;
 		}
 		.header{
@@ -261,21 +440,6 @@
 			justify-content: space-between;
 			font-size: var(--menu);
 			padding: 2px 3px;
-		}
-		ul.menu li.tagLine{
-			margin: 0 15%;
-			align-self: flex-start;
-			text-align: center;
-			color: var(--ivory);
-			font-family: cursive;
-			font-size: var(--lg-font);
-		}
-		ul.menu li.tagLine > p{
-			text-decoration-line: underline;
-			text-decoration-style: wavy;
-			text-decoration-color: var(--ivory);
-			margin-top: 3px;
-			margin-bottom: 5px;
 		}
 		ul.menu li{
 			padding-right: 10px;
@@ -319,6 +483,23 @@
 			padding-top: 4rem;
 		}
 		.pizza{
+			height: 200px;
 			width: 31%;
+		}
+		.cartContainer .header{
+			display: flex;
+		}
+		.productImage{
+			width: 29%;
+			margin-right: 1rem;
+			display: flex;
+			justify-content: flex-end;
+			align-content: center;
+		}
+		.cartItem .product{
+			width: 59vw;
+		}
+		.cartItem .sale{
+			width: 25vw;
 		}
 	}

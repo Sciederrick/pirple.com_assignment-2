@@ -358,18 +358,12 @@ app.loadDataOnPage = function(){
   //   app.loadAccountEditPage();
   // }
 
-  // Logic for dashboard page
-  // if(primaryClass == 'checksList'){
-  //   app.loadChecksListPage();
-  // }
-
-  // Logic for check details page
-  // if(primaryClass == 'checksEdit'){
-  //   app.loadChecksEditPage();
-  // }
-
   if(primaryClass == 'menuList'){
     app.loadMenuListPage();
+  }
+  
+  if(primaryClass == 'shoppingCart'){
+    app.loadCartPage();
   }
 };
 
@@ -414,17 +408,21 @@ app.loadMenuListPage = function(){
     var queryStringObject = {
       'email' : email
     };
+    // @TODO: Fetch the number of cartItems
+    //  ...
+
+    //  Fetch menu items
     app.client.request(undefined,'api/menu','GET',queryStringObject,undefined,function(statusCode,responsePayload){
       if(statusCode == 200){
         //  Determine the number of cart items the user has
         var menuItems = Array.isArray(responsePayload) && responsePayload.length > 0 ? responsePayload : false;
         var numberOfItems = 0;
         if(menuItems){
-          var numberOfItems = menuItems.length; // @TODO: send this to the navigation bar
+          var numberOfItems = menuItems.length; 
 
           //  Append data to the DOM
           var container = document.querySelector("div.pizzaContainer");
-          var elDivPizza, elDivPizzaDescription, elDivPizzaImage, elH3, elPIngredients, elPPrice, elImg, name, ingredients, price;
+          var elDivPizza, elDivPizzaDescription, elDivPizzaImage, elH3, elPIngredients, elPPrice, elImg, name, ingredients, price, elDivAddToCart, elAddToCartButton, elRemoveFromCartButton, elNumberInput, addToCart, removeFromCart;
           for(i = 0; i < numberOfItems; i++){
             // "div.pizza"
             elDivPizza = document.createElement('div');
@@ -454,15 +452,43 @@ app.loadMenuListPage = function(){
             // "p.ingredients"
             elPIngredients = document.createElement('p');
             elPIngredients.setAttribute('class', 'ingredients');
-            ingredients = document.createTextNode('Nam in, nulla ,eget ,nisi scelerisque, tempor, Maecenas ,consectetur');
+            ingredients = document.createTextNode('Nam in, nulla, eget, nisi scelerisque, tempor, Maecenas, consectetur');
             elPIngredients.appendChild(ingredients);            
             elDivPizzaDescription.appendChild(elPIngredients);
             // "p.price"
             elPPrice = document.createElement('p');
             elPPrice.setAttribute('class', 'price');
-            price = document.createTextNode(`$${menuItems[i].price}`);
+            price = document.createTextNode(`$ ${menuItems[i].price}`);
             elPPrice.appendChild(price);
             elDivPizzaDescription.appendChild(elPPrice);
+            // div.addToCart
+            elDivAddToCart = document.createElement('div');
+            elDivAddToCart.setAttribute('class', 'addToCart');
+
+            elAddToCartButton = document.createElement('button');
+            elAddToCartButton.setAttribute('id', `add${menuItems[i].id}`);
+            elAddToCartButton.setAttribute('class', 'addToCart');
+            addToCart = document.createTextNode('Add To Cart');
+            elAddToCartButton.appendChild(addToCart);
+            
+            elRemoveFromCartButton = document.createElement('button');
+            elRemoveFromCartButton.setAttribute('id', `remove${menuItems[i].id}`);
+            elRemoveFromCartButton.setAttribute('class', 'removeFromCart');
+            removeFromCart = document.createTextNode('Remove from Cart');
+            elRemoveFromCartButton.appendChild(removeFromCart);
+
+            elNumberInput = document.createElement('input');
+            elNumberInput.setAttribute('type', 'number');
+            elNumberInput.setAttribute('id', `quantity${menuItems[i].id}`);
+            elNumberInput.setAttribute('min', 1);
+            elNumberInput.setAttribute('max', 50);
+            elNumberInput.setAttribute('value', 0);
+
+            elDivAddToCart.appendChild(elAddToCartButton);
+            elDivAddToCart.appendChild(elRemoveFromCartButton);
+            elDivAddToCart.appendChild(elNumberInput);
+            elDivPizzaDescription.appendChild(elDivAddToCart);
+
             // "img:src:[alt='pizza snapshot']"
             elImg = document.createElement('img');
             elImg.setAttribute('src', menuItems[i].image);
@@ -485,114 +511,189 @@ app.loadMenuListPage = function(){
   }
 }
 
-// Load the dashboard page specifically
-app.loadChecksListPage = function(){
-  // Get the phone number from the current token, or log the user out if none is there
-  var phone = typeof(app.config.sessionToken.phone) == 'string' ? app.config.sessionToken.phone : false;
-  if(phone){
+// Load the cart page specifically
+app.loadCartPage = function(){
+  // Get the email address from the current token, or log the user out if none is there
+  var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+  if(email){
     // Fetch the user data
     var queryStringObject = {
-      'phone' : phone
+      'email' : email
     };
-    app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+    // Fetch cartItems
+    app.client.request(undefined,'api/cart','GET',queryStringObject,undefined,function(statusCode,responsePayload){
       if(statusCode == 200){
+        //  Determine the number of cart items the user has
+        var cartItems = Array.isArray(responsePayload.data) && responsePayload.data.length > 0 ? responsePayload.data : false;
+        var numberOfItems = 0;
+        if(cartItems){
+          var numberOfItems = cartItems.length; 
 
-        // Determine how many checks the user has
-        var allChecks = typeof(responsePayload.checks) == 'object' && responsePayload.checks instanceof Array && responsePayload.checks.length > 0 ? responsePayload.checks : [];
-        if(allChecks.length > 0){
+          //  Append data to the DOM
+          var container = document.querySelector("div.cartContainer");
+          var elDivCartItem, elDivProduct, elDivProductImage, elImg, elDivProductDescription, elH3, elH4, elPIngredients, name, category, ingredients, elDivSale, elDivPrice, elDivQuantity, elPPrice, elPQuantity, price, quantity, elPTag, tag;
+          for(i = 0; i < numberOfItems; i++){
+            // - "div.cartItem"
+            elDivCartItem = document.createElement('div');
+            elDivCartItem.setAttribute('class', 'cartItem'); 
+            elDivCartItem.setAttribute('id', cartItems[i].item.id);      
 
-          // Show each created check as a new row in the table
-          allChecks.forEach(function(checkId){
-            // Get the data for the check
-            var newQueryStringObject = {
-              'id' : checkId
+            // -- "div.product"
+            elDivProduct = document.createElement('div');
+            elDivProduct.setAttribute('class', 'product');            
+            elDivCartItem.appendChild(elDivProduct);
+
+            // --- "div.productImage"
+            elDivProductImage = document.createElement('div');
+            elDivProductImage.setAttribute('class', 'productImage');
+            elDivProduct.appendChild(elDivProductImage);
+
+            // ---- "img"
+            elImg = document.createElement('img');
+            elImg.setAttribute('src', cartItems[i].item.image);
+            elImg.setAttribute('alt', 'product');
+            elDivProductImage.appendChild(elImg);
+
+            // --- "div.productDescription"
+            elDivProductDescription = document.createElement('div');
+            elDivProductDescription.setAttribute('class', 'productDescription');
+            elDivProduct.appendChild(elDivProductDescription);
+
+            // ---- "h3.name"
+            elH3 = document.createElement('h3');
+            elH3.setAttribute('class', 'name');
+            name = document.createTextNode(cartItems[i].item.name);
+            elH3.appendChild(name);
+            elDivProductDescription.appendChild(elH3);
+            // ---- "h4.category"
+            elH4 = document.createElement('h4');
+            elH4.setAttribute('class', 'category');
+            category = document.createTextNode(cartItems[i].item.category);
+            elH4.appendChild(category);
+            elDivProductDescription.appendChild(elH4);
+            // ---- "p.ingredients"
+            elPIngredients = document.createElement('p');
+            elPIngredients.setAttribute('class', 'ingredients');
+            ingredients = document.createTextNode('Nam in, nulla ,eget ,nisi scelerisque, tempor, Maecenas ,consectetur');
+            elPIngredients.appendChild(ingredients);            
+            elDivProductDescription.appendChild(elPIngredients);
+
+            // -- "div.sale"
+            elDivSale = document.createElement('div');
+            elDivSale.setAttribute('class', 'sale');
+            elDivCartItem.appendChild(elDivSale)
+            
+            // --- "div.price"
+            elDivPrice = document.createElement('div');
+            elDivPrice.setAttribute('class', 'price')
+            elPTag = document.createElement('p');
+            tag = document.createTextNode('Unit Price')
+            elPTag.appendChild(tag)
+            elPPrice = document.createElement('p');
+            price = document.createTextNode(`$ ${cartItems[i].item.price}`)
+            elPPrice.appendChild(price)
+            elDivPrice.appendChild(elPTag);
+            elDivPrice.appendChild(elPPrice);
+            elDivSale.appendChild(elDivPrice);
+
+            // --- "div.quantity"
+            elDivQuantity = document.createElement('div');
+            elDivQuantity.setAttribute('class', 'quantity');
+            elPTag = document.createElement('p');
+            tag = document.createTextNode('Quantity')
+            elPTag.appendChild(tag)
+            elPQuantity = document.createElement('p');
+            quantity = document.createTextNode(cartItems[i].quantity);
+            elPQuantity.appendChild(quantity);
+            elDivQuantity.appendChild(elPTag);
+            elDivQuantity.appendChild(elPQuantity);
+            elDivSale.appendChild(elDivQuantity);
+
+            container.appendChild(elDivCartItem);
+          }
+        }else{
+          // @TODO
+        }
+      }else{
+        // If the request comes back as something other than 200, log the user out (on the assumption that the api is temporarily down or the users token is bad)
+        app.logUserOut();
+      }
+    })
+  }else{
+    app.logUserOut();
+  }
+}
+
+app.addToCart = function(){
+  //@TODO: load user cart items, use the id's to determine the state of add/remove-from-cart buttons
+  
+  // functionality only available for menu page only
+  var menuPage = document.querySelector('body.menuList');
+  if(menuPage){
+    // bind click handler to element that is added later/dynamically
+    document.addEventListener('click', function(e){
+      // Get the email address from the current token, or log the user out if none is there
+      var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+      if(email){
+        if(e.target && e.target.classList[0] == 'addToCart'){
+          // Modify the frontend
+          var addToCartId = e.target.id;
+          var id = addToCartId.replace('add', '');
+          var quantityInput = document.querySelector(`#quantity${id}`);
+          var quantity = quantityInput.value;
+  
+          // Add items to cart
+            if(id && quantity){
+              var payload = {
+                email: email,
+                productId: id,
+                quantity: quantity
+              }
+              app.client.request(undefined, 'api/cart', 'POST', undefined, payload, function(statusCode, responsePayload){
+                if(statusCode == 200){
+                  e.target.style.display = 'none';            
+                  var removeFromCartId = `remove${id}`;
+                  var removeFromCartButton = document.querySelector(`button#${removeFromCartId}`);
+                  removeFromCartButton.style.display = 'block';
+                  console.log(statusCode, responsePayload);
+                }else{
+                  // Error
+                  console.log(statusCode, responsePayload);
+                }
+              });
+            }else{
+              console.log('Invalid id or quantity values');
+            }
+        }else if(e.target && e.target.classList[0] == 'removeFromCart'){
+          var removeFromCartId = e.target.id;
+          var id = removeFromCartId.replace('remove', '');
+          
+          if(id){
+            var queryStringObject = {
+              'email' : email,
+              'id' : id
             };
-            app.client.request(undefined,'api/checks','GET',newQueryStringObject,undefined,function(statusCode,responsePayload){
+            app.client.request(undefined, 'api/cart', 'DELETE', queryStringObject, undefined, function(statusCode, responsePayload){
               if(statusCode == 200){
-                var checkData = responsePayload;
-                // Make the check data into a table row
-                var table = document.getElementById("checksListTable");
-                var tr = table.insertRow(-1);
-                tr.classList.add('checkRow');
-                var td0 = tr.insertCell(0);
-                var td1 = tr.insertCell(1);
-                var td2 = tr.insertCell(2);
-                var td3 = tr.insertCell(3);
-                var td4 = tr.insertCell(4);
-                td0.innerHTML = responsePayload.method.toUpperCase();
-                td1.innerHTML = responsePayload.protocol+'://';
-                td2.innerHTML = responsePayload.url;
-                var state = typeof(responsePayload.state) == 'string' ? responsePayload.state : 'unknown';
-                td3.innerHTML = state;
-                td4.innerHTML = '<a href="/checks/edit?id='+responsePayload.id+'">View / Edit / Delete</a>';
-              } else {
-                console.log("Error trying to load check ID: ",checkId);
+                e.target.style.display = 'none';            
+                var addToCartId = `add${id}`;
+                var addToCartButton = document.querySelector(`button#${addToCartId}`);
+                addToCartButton.style.display = 'block';
+                console.log(statusCode, responsePayload);
+              }else{
+                // Error
+                console.log(statusCode, responsePayload);
               }
             });
-          });
-
-          if(allChecks.length < 5){
-            // Show the createCheck CTA
-            document.getElementById("createCheckCTA").style.display = 'block';
+          }else{
+            console.log('Invalid id');
           }
-
-        } else {
-          // Show 'you have no checks' message
-          document.getElementById("noChecksMessage").style.display = 'table-row';
-
-          // Show the createCheck CTA
-          document.getElementById("createCheckCTA").style.display = 'block';
-
+          // Remove items from cart
         }
-      } else {
-        // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
+      }else{
         app.logUserOut();
       }
     });
-  } else {
-    app.logUserOut();
-  }
-};
-
-
-// Load the checks edit page specifically
-app.loadChecksEditPage = function(){
-  // Get the check id from the query string, if none is found then redirect back to dashboard
-  var id = typeof(window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 ? window.location.href.split('=')[1] : false;
-  if(id){
-    // Fetch the check data
-    var queryStringObject = {
-      'id' : id
-    };
-    app.client.request(undefined,'api/checks','GET',queryStringObject,undefined,function(statusCode,responsePayload){
-      if(statusCode == 200){
-
-        // Put the hidden id field into both forms
-        var hiddenIdInputs = document.querySelectorAll("input.hiddenIdInput");
-        for(var i = 0; i < hiddenIdInputs.length; i++){
-            hiddenIdInputs[i].value = responsePayload.id;
-        }
-
-        // Put the data into the top form as values where needed
-        document.querySelector("#checksEdit1 .displayIdInput").value = responsePayload.id;
-        document.querySelector("#checksEdit1 .displayStateInput").value = responsePayload.state;
-        document.querySelector("#checksEdit1 .protocolInput").value = responsePayload.protocol;
-        document.querySelector("#checksEdit1 .urlInput").value = responsePayload.url;
-        document.querySelector("#checksEdit1 .methodInput").value = responsePayload.method;
-        document.querySelector("#checksEdit1 .timeoutInput").value = responsePayload.timeoutSeconds;
-        var successCodeCheckboxes = document.querySelectorAll("#checksEdit1 input.successCodesInput");
-        for(var i = 0; i < successCodeCheckboxes.length; i++){
-          if(responsePayload.successCodes.indexOf(parseInt(successCodeCheckboxes[i].value)) > -1){
-            successCodeCheckboxes[i].checked = true;
-          }
-        }
-      } else {
-        // If the request comes back as something other than 200, redirect back to dashboard
-        window.location = '/checks/all';
-      }
-    });
-  } else {
-    window.location = '/checks/all';
   }
 };
 
@@ -606,6 +707,7 @@ app.tokenRenewalLoop = function(){
     });
   },1000 * 60);
 };
+
 
 // Init (bootstrapping)
 app.init = function(){
@@ -624,6 +726,9 @@ app.init = function(){
 
   // Load data on page
   app.loadDataOnPage();
+
+  // Add to Cart & Remove from Cart
+  app.addToCart();
 
 };
 
