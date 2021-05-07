@@ -11,6 +11,9 @@ app.config = {
   'sessionToken' : false
 };
 
+// User data
+app.cartData = [];
+
 // AJAX Client (for RESTful API)
 app.client = {}
 
@@ -408,18 +411,27 @@ app.loadMenuListPage = function(){
     var queryStringObject = {
       'email' : email
     };
-    // @TODO: Fetch the number of cartItems
-    //  ...
-
-    //  Fetch menu items
+    // Step 1: Fetch cartItems
+    app.client.request(undefined,'api/cart','GET',queryStringObject,undefined,function(statusCode, responsePayload){
+      if(statusCode == 200){
+        //  Determine the number of cart items the user has
+        var cartItems = Array.isArray(responsePayload.data) && responsePayload.data.length > 0 ? responsePayload.data : false;
+        var numberOfItems = 0;
+        if(cartItems){
+          numberOfItems = cartItems.length; 
+          for(i = 0; i < numberOfItems; i++){
+            app.cartData.push({id: cartItems[i].item.id, quantity: cartItems[i].quantity});
+          }
+        }else{
+          // @TODO
+        }
+            //  Step 2: Fetch menu items
     app.client.request(undefined,'api/menu','GET',queryStringObject,undefined,function(statusCode,responsePayload){
       if(statusCode == 200){
         //  Determine the number of cart items the user has
         var menuItems = Array.isArray(responsePayload) && responsePayload.length > 0 ? responsePayload : false;
-        var numberOfItems = 0;
         if(menuItems){
           var numberOfItems = menuItems.length; 
-
           //  Append data to the DOM
           var container = document.querySelector("div.pizzaContainer");
           var elDivPizza, elDivPizzaDescription, elDivPizzaImage, elH3, elPIngredients, elPPrice, elImg, name, ingredients, price, elDivAddToCart, elAddToCartButton, elRemoveFromCartButton, elNumberInput, addToCart, removeFromCart;
@@ -464,25 +476,37 @@ app.loadMenuListPage = function(){
             // div.addToCart
             elDivAddToCart = document.createElement('div');
             elDivAddToCart.setAttribute('class', 'addToCart');
-
+            
             elAddToCartButton = document.createElement('button');
             elAddToCartButton.setAttribute('id', `add${menuItems[i].id}`);
             elAddToCartButton.setAttribute('class', 'addToCart');
             addToCart = document.createTextNode('Add To Cart');
-            elAddToCartButton.appendChild(addToCart);
             
             elRemoveFromCartButton = document.createElement('button');
             elRemoveFromCartButton.setAttribute('id', `remove${menuItems[i].id}`);
             elRemoveFromCartButton.setAttribute('class', 'removeFromCart');
             removeFromCart = document.createTextNode('Remove from Cart');
-            elRemoveFromCartButton.appendChild(removeFromCart);
-
+            
             elNumberInput = document.createElement('input');
             elNumberInput.setAttribute('type', 'number');
             elNumberInput.setAttribute('id', `quantity${menuItems[i].id}`);
             elNumberInput.setAttribute('min', 1);
             elNumberInput.setAttribute('max', 50);
-            elNumberInput.setAttribute('value', 0);
+            
+            app.cartData.forEach(function(item){
+              if(item.id == menuItems[i].id){// if the item is already in the cart handle the state of the buttons (remove/add-to-cart)
+                elAddToCartButton.setAttribute('style', 'display: none;');
+                elRemoveFromCartButton.setAttribute('style', 'display: block;');
+                elNumberInput.setAttribute('value', item.quantity);
+              }
+            });
+
+            if(!elNumberInput.hasAttribute('value')){
+              elNumberInput.setAttribute('value', 1);
+            }
+
+            elAddToCartButton.appendChild(addToCart);
+            elRemoveFromCartButton.appendChild(removeFromCart);
 
             elDivAddToCart.appendChild(elAddToCartButton);
             elDivAddToCart.appendChild(elRemoveFromCartButton);
@@ -498,7 +522,7 @@ app.loadMenuListPage = function(){
             container.appendChild(elDivPizza);
           }
         }else{
-          // empty menu, log the user our (on the assumption that the api is temporarily down
+          // empty menu, log the user our (on the assumption that the api is temporarily down)
           app.logUserOut();
         }
       }else{
@@ -506,6 +530,11 @@ app.loadMenuListPage = function(){
         app.logUserOut();
       }
     })
+      }else{
+        // If the request comes back as something other than 200, log the user out (on the assumption that the api is temporarily down or the users token is bad)
+        app.logUserOut();
+      }
+    });
   }else{
     app.logUserOut();
   }
@@ -527,7 +556,7 @@ app.loadCartPage = function(){
         var cartItems = Array.isArray(responsePayload.data) && responsePayload.data.length > 0 ? responsePayload.data : false;
         var numberOfItems = 0;
         if(cartItems){
-          var numberOfItems = cartItems.length; 
+          numberOfItems = cartItems.length; 
 
           //  Append data to the DOM
           var container = document.querySelector("div.cartContainer");
@@ -625,7 +654,6 @@ app.loadCartPage = function(){
 }
 
 app.addToCart = function(){
-  //@TODO: load user cart items, use the id's to determine the state of add/remove-from-cart buttons
   
   // functionality only available for menu page only
   var menuPage = document.querySelector('body.menuList');
