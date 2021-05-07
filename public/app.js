@@ -603,7 +603,7 @@ app.loadCartPage = function(){
             // ---- "p.ingredients"
             elPIngredients = document.createElement('p');
             elPIngredients.setAttribute('class', 'ingredients');
-            ingredients = document.createTextNode('Nam in, nulla ,eget ,nisi scelerisque, tempor, Maecenas ,consectetur');
+            ingredients = document.createTextNode('Nam in, nulla, eget, nisi scelerisque, tempor, Maecenas, consectetur');
             elPIngredients.appendChild(ingredients);            
             elDivProductDescription.appendChild(elPIngredients);
 
@@ -683,7 +683,6 @@ app.addToCart = function(){
                   var removeFromCartId = `remove${id}`;
                   var removeFromCartButton = document.querySelector(`button#${removeFromCartId}`);
                   removeFromCartButton.style.display = 'block';
-                  console.log(statusCode, responsePayload);
                 }else{
                   // Error
                   console.log(statusCode, responsePayload);
@@ -707,7 +706,6 @@ app.addToCart = function(){
                 var addToCartId = `add${id}`;
                 var addToCartButton = document.querySelector(`button#${addToCartId}`);
                 addToCartButton.style.display = 'block';
-                console.log(statusCode, responsePayload);
               }else{
                 // Error
                 console.log(statusCode, responsePayload);
@@ -724,6 +722,45 @@ app.addToCart = function(){
     });
   }
 };
+
+app.modifyCart = function(){
+  // functionality only available for menu page only
+  var menuPage = document.querySelector('body.menuList');
+  if(menuPage){
+    document.addEventListener('change', function(e){
+    // Get the email address from the current token, or log the user out if none is there
+    var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+    if(email){
+      var quantityInputId = e.target.id;
+      var id = quantityInputId.replace('quantity', '');
+      // check for removeFromCart button with similar id and (@TODO)with display property of block
+      var removeFromCartButton = document.querySelector(`#remove${id}`);
+      if(removeFromCartButton){
+        var quantity = e.target.value;
+        var payload = {
+          'id': id,
+          'email': email,
+          'quantity': quantity
+        }
+        app.client.request(undefined, 'api/cart', 'PUT', undefined, payload, function(statusCode, responsePayload){
+          if(statusCode == 200){
+            // @TODO
+            console.log(statusCode)
+          }else{
+            // @TODO
+            console.log(statusCode);
+          }
+        });
+      }else{
+        // @TODO
+        console.log('corresponding button missing, id:', id);
+      }
+    }else{
+      app.logUserOut();
+    }
+    })
+  }
+}
 
 // Loop to renew token often
 app.tokenRenewalLoop = function(){
@@ -757,6 +794,9 @@ app.init = function(){
 
   // Add to Cart & Remove from Cart
   app.addToCart();
+
+  // Modify Cart (quantity)
+  app.modifyCart();
 
 };
 
