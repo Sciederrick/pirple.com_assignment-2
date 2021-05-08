@@ -151,6 +151,7 @@
 		margin-top: 15px;
 		padding: 10px 4px;
 		font-size: 0.8rem;
+		text-align: center;
 	}
 	.index .content{
 		padding-top: 4rem;
@@ -161,7 +162,7 @@
 	.accountCreate .content{
 		padding-top: 1.8rem;
 	}
-	.index h1, .index h2, .sessionCreate h1, .sessionCreate h2, .accountCreate h1, .accountCreate h2, .menuList h1, .menuList h2{
+	.index h1, .index h2, .sessionCreate h1, .sessionCreate h2, .sessionDeleted h1, .sessionDeleted h2, .accountCreate h1, .accountCreate h2, .menuList h1, .menuList h2{
 		padding: 4px 0;
 		color: var(--mimosa);
 		text-align: center;
@@ -201,6 +202,28 @@
 	}
 	.sessionCreate .formWrapper{
 		height: 60%;
+	}
+	.sessionDeleted .menu, .sessionDeleted button.bars{
+		display: none;
+	}
+	.sessionDeleted .ctaWrapper{
+		height: 20vh;
+		width: 99vw;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.sessionDeleted .ctaWrapper > a{
+		text-align: center;
+		border: 1px solid var(--ivory);
+		border-radius: 3px;
+		padding: 10px 6px;
+		text-decoration: none;
+		color: var(--ivory);
+	}
+	.sessionDeleted .ctaWrapper > a:hover{
+		color: var(--tigerLily);
+		background-color: var(--ivory);
 	}
 	.menuList .loggedOut,.shoppingCart .loggedOut{
 		display: none;
