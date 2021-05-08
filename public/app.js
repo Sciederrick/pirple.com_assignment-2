@@ -733,9 +733,10 @@ app.modifyCart = function(){
     if(email){
       var quantityInputId = e.target.id;
       var id = quantityInputId.replace('quantity', '');
-      // check for removeFromCart button with similar id and (@TODO)with display property of block
+      // check for removeFromCart button with similar id and with display property of block
       var removeFromCartButton = document.querySelector(`#remove${id}`);
-      if(removeFromCartButton){
+      var display = removeFromCartButton.style.display;
+      if(removeFromCartButton && display == 'block'){
         var quantity = e.target.value;
         var payload = {
           'id': id,
