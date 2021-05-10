@@ -561,6 +561,7 @@ app.loadCartPage = function(){
           //  Append data to the DOM
           var container = document.querySelector("div.cartContainer");
           var elDivCartItem, elDivProduct, elDivProductImage, elImg, elDivProductDescription, elH3, elH4, elPIngredients, name, category, ingredients, elDivSale, elDivPrice, elDivQuantity, elPPrice, elPQuantity, price, quantity, elPTag, tag;
+          var totalCost = 0;
           for(i = 0; i < numberOfItems; i++){
             // - "div.cartItem"
             elDivCartItem = document.createElement('div');
@@ -631,15 +632,29 @@ app.loadCartPage = function(){
             elPTag = document.createElement('p');
             tag = document.createTextNode('Quantity')
             elPTag.appendChild(tag)
-            elPQuantity = document.createElement('p');
-            quantity = document.createTextNode(cartItems[i].quantity);
-            elPQuantity.appendChild(quantity);
+            elNumberInput = document.createElement('input');
+            elNumberInput.setAttribute('type', 'number');
+            elNumberInput.setAttribute('id', `quantity${cartItems[i].item.id}`);
+            elNumberInput.setAttribute('min', 1);
+            elNumberInput.setAttribute('max', 50);
+            elNumberInput.setAttribute('value', cartItems[i].quantity);
             elDivQuantity.appendChild(elPTag);
-            elDivQuantity.appendChild(elPQuantity);
+            elDivQuantity.appendChild(elNumberInput);
             elDivSale.appendChild(elDivQuantity);
 
+            elRemoveFromCartButton = document.createElement('button');
+            elRemoveFromCartButton.setAttribute('id', `remove${cartItems[i].item.id}`);
+            elRemoveFromCartButton.setAttribute('class', 'removeFromCart');
+            elRemoveFromCartButton.setAttribute('style', 'display: block;');
+            removeFromCart = document.createTextNode('Remove from Cart');
+            elRemoveFromCartButton.appendChild(removeFromCart);
+            elDivCartItem.appendChild(elRemoveFromCartButton);
+
             container.appendChild(elDivCartItem);
+            totalCost += ((cartItems[i].item.price * 1) * (cartItems[i].quantity * 1));
           }
+          var totalDiv = document.querySelector('.checkout .total > div');
+          totalDiv.textContent = `Total Cost: $ ${totalCost}`;
         }else{
           // @TODO
         }
@@ -655,8 +670,9 @@ app.loadCartPage = function(){
 
 app.addToCart = function(){
   
-  // functionality only available for menu page only
-  var menuPage = document.querySelector('body.menuList');
+  // functionality only available for menu page and shopping cart only
+  var menuPage = document.querySelector('body.menuList')||document.querySelector('body.shoppingCart');
+  var shoppingCart = document.querySelector('body.shoppingCart') ? true : false;
   if(menuPage){
     // bind click handler to element that is added later/dynamically
     document.addEventListener('click', function(e){
@@ -702,10 +718,15 @@ app.addToCart = function(){
             };
             app.client.request(undefined, 'api/cart', 'DELETE', queryStringObject, undefined, function(statusCode, responsePayload){
               if(statusCode == 200){
-                e.target.style.display = 'none';            
-                var addToCartId = `add${id}`;
-                var addToCartButton = document.querySelector(`button#${addToCartId}`);
-                addToCartButton.style.display = 'block';
+                if(!shoppingCart){
+                  e.target.style.display = 'none';            
+                  var addToCartId = `add${id}`;
+                  var addToCartButton = document.querySelector(`button#${addToCartId}`);
+                  addToCartButton.style.display = 'block';
+                }else{
+                  var divCartItem = document.getElementById(id);
+                  divCartItem.style.display = 'none';
+                }
               }else{
                 // Error
                 console.log(statusCode, responsePayload);
@@ -724,8 +745,8 @@ app.addToCart = function(){
 };
 
 app.modifyCart = function(){
-  // functionality only available for menu page only
-  var menuPage = document.querySelector('body.menuList');
+  // functionality only available for menu page and shopping cart only
+  var menuPage = document.querySelector('body.menuList')||document.querySelector('body.shoppingCart');
   if(menuPage){
     document.addEventListener('change', function(e){
     // Get the email address from the current token, or log the user out if none is there
@@ -761,7 +782,42 @@ app.modifyCart = function(){
     }
     })
   }
-}
+};
+
+app.checkout = function(){
+  // functionality only available for menu page and shopping cart only
+  var shoppingCartPage = document.querySelector('body.shoppingCart');
+  if(shoppingCartPage){
+    var checkoutBtn = document.querySelector('button#checkout');
+    checkoutBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      // Get the email address from the current token, or log the user out if none is there
+      var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+      if(email){
+        var payload = {
+          email: email
+        }
+        app.client.request(undefined,'api/checkout','POST',undefined,payload,function(statusCode,responsePayload){
+          if(statusCode == 200){
+            if(responsePayload){
+              try{
+                var stripe = Stripe('pk_test_51IJG3JCNlIgCXQydYsydKwVqZUpQVwvZIuXWjO1xQMZ2vkaSIpp8MEVSk31eWfexTj4nHcTcmDAsUaH1Myuj9ykT00hmvS6TaI');
+                return stripe.redirectToCheckout({ sessionId: responsePayload.id });
+              }catch(err){
+                // @TODO
+                console.log(err.error.message);
+              }
+            }
+          }else{
+            // @TODO
+          }
+        });
+      }else{
+        app.logUserOut();
+      }
+    });
+  }
+};
 
 // Loop to renew token often
 app.tokenRenewalLoop = function(){
@@ -798,6 +854,8 @@ app.init = function(){
 
   // Modify Cart (quantity)
   app.modifyCart();
+
+  app.checkout();
 
 };
 

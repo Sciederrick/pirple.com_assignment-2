@@ -24,6 +24,14 @@
 		font-size: var(--sm-font);
 		font-family: Arial, Helvetica, sans-serif;
 	}
+	input[type='number']{
+		width:50px;
+	}
+
+	.linkInactive{
+		cursor: not-allowed;
+		color: #800000!important;
+	}
 
 	/* width */
 	::-webkit-scrollbar {
@@ -93,6 +101,7 @@
 		font-size: var(--menu);
 		padding: 10vh 0;
 		background-color: var(--green);
+		z-index: 2;
 	}
 	ul.navMobile li{
 		padding: 25px 0 25px 20vw;
@@ -102,6 +111,9 @@
 		text-decoration: none;
 		font-family: Arial, Helvetica, sans-serif;
 		color: var(--ivory);
+	}
+	ul.navMobile li a:hover{
+		text-decoration: underline var(--mimosa) 2px;
 	}
 	.formWrapper {
 		margin: 0 auto;
@@ -235,9 +247,12 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: flex-start;
-		padding-left: 5px;
+		/* padding-left: 5px; */
 		align-items: baseline;
 		background-color: var(--ivory);
+	}
+	.cartContainer{
+		margin: 0;
 	}
 	.pizza{
 		border-bottom: 1px solid var(--tigerLily);
@@ -304,7 +319,7 @@
 	.sale .quantity{
 		width: 70%;
 	}
-	.price > p, .quantity > p{
+	.price > p, .quantity > p, .quantity input[type='number']{
         margin: .5rem 0;
 	}
 	.price > p{
@@ -318,8 +333,8 @@
 		width: 99%;
 		margin: auto;
 		justify-content: space-evenly;
-		padding: 1rem .5rem;
-		background-color: var(--mimosa);
+		padding: 0 .5rem;
+		background-color: var(--ivory);
 	}
 	.checkout .other{
 		padding-left: 5px;
@@ -332,6 +347,10 @@
 	}
 	button#checkout{
 		background-color: var(--green);
+		color: var(--ivory);
+	}
+	button#checkout:hover{
+		background-color: var(--tigerLily);
 		color: var(--ivory);
 	}
 	div.addToCart{
@@ -357,6 +376,18 @@
 		text-decoration: underline;
 		font-size: 0.7rem;
 		display: none;
+	}
+	.shoppingCart div.cartItem{
+		position: relative;
+	}
+	.shoppingCart button.removeFromCart{
+		position: absolute;
+		right: 10px;
+		bottom: 5px;
+	}
+	.shoppingCart .checkout .total > div{
+		font-family: monospace;
+		font-weight: bold;
 	}
 	
 	@media only screen and (min-width: 600px) {
@@ -442,7 +473,11 @@
 	button#checkout{
 		font-size: var(--md-font);
 	}
-	
+	.shoppingCart button.removeFromCart{
+		bottom: .5px;
+		padding: 0;
+		margin-right: 4vw;
+	}
   }
 
 	@media only screen and (min-width: 1024px){
@@ -472,6 +507,9 @@
 			text-decoration: none;
 			font-family: Arial, Helvetica, sans-serif;
 			color: var(--ivory);
+		}
+		ul.menu li a:hover{
+			text-decoration: underline var(--mimosa) 2px;
 		}
 		.formWrapper{
 			width: 50%;
@@ -524,5 +562,10 @@
 		}
 		.cartItem .sale{
 			width: 25vw;
+		}
+		.shoppingCart button.removeFromCart{
+			right: 10px;
+			bottom: 5px;
+			padding: 8px 12px;
 		}
 	}

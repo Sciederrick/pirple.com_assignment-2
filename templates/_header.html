@@ -16,6 +16,7 @@
         <link type="image/x-icon" rel="icon" href="favicon.ico">
         <script type="text/javascript" charset="UTF-8" src="public/app.js"></script>
         <script type="text/javascript" charset="UTF-8" src="public/navbar.js" defer></script>
+        <script src="https://js.stripe.com/v3/" defer></script>
         <link rel="stylesheet" type="text/css" href="public/app.css"/>
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -46,19 +47,19 @@
                 <a href="/cart">cart</a>
               </li>
               <li class="loggedIn">
-                <a href="/account/edit">Account Settings</a>
+                <a href="/account/edit" class="linkInactive" title="coming soon">Account Settings</a>
               </li>
               <li class="loggedIn">
                 <a href="#" id="logoutButton">Logout</a>
               </li>
               <li class="loggedOut">
-              <a href="#" id="logoutButton">Gallery</a>
+              <a href="#" class="linkInactive" title="coming soon">Gallery</a>
               </li>
               <li class="loggedOut">
-                <a href="#" id="logoutButton">Contact</a>
+                <a href="#" class="linkInactive" title="coming soon">Contact</a>
               </li>
               <li class="loggedOut">
-                <a href="#" id="logoutButton">About</a>
+                <a href="#" class="linkInactive" title="coming soon">About</a>
               </li>
             </ul>
             <!-- Hamburger Button -->
