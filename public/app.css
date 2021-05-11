@@ -32,6 +32,16 @@
 		cursor: not-allowed;
 		color: #800000!important;
 	}
+	.formError{
+		color: ivory;
+		text-align: center;
+		text-decoration: overline underline;
+	}
+	.emptyCart{
+		margin:auto;
+		font-weight: bold;
+		font-size: var(--lg-font);
+	}
 
 	/* width */
 	::-webkit-scrollbar {

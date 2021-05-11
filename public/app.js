@@ -14,6 +14,9 @@ app.config = {
 // User data
 app.cartData = [];
 
+// quantity input old values
+app.oldQuantityValue = [];
+
 // AJAX Client (for RESTful API)
 app.client = {}
 
@@ -422,8 +425,6 @@ app.loadMenuListPage = function(){
           for(i = 0; i < numberOfItems; i++){
             app.cartData.push({id: cartItems[i].item.id, quantity: cartItems[i].quantity});
           }
-        }else{
-          // @TODO
         }
             //  Step 2: Fetch menu items
     app.client.request(undefined,'api/menu','GET',queryStringObject,undefined,function(statusCode,responsePayload){
@@ -555,12 +556,12 @@ app.loadCartPage = function(){
         //  Determine the number of cart items the user has
         var cartItems = Array.isArray(responsePayload.data) && responsePayload.data.length > 0 ? responsePayload.data : false;
         var numberOfItems = 0;
+        var container = document.querySelector("div.cartContainer");
         if(cartItems){
           numberOfItems = cartItems.length; 
 
           //  Append data to the DOM
-          var container = document.querySelector("div.cartContainer");
-          var elDivCartItem, elDivProduct, elDivProductImage, elImg, elDivProductDescription, elH3, elH4, elPIngredients, name, category, ingredients, elDivSale, elDivPrice, elDivQuantity, elPPrice, elPQuantity, price, quantity, elPTag, tag;
+          var elDivCartItem, elDivProduct, elDivProductImage, elImg, elDivProductDescription, elH3, elH4, elPIngredients, name, category, ingredients, elDivSale, elDivPrice, elDivQuantity, elPPrice, elPQuantity, price, quantity, elPTag, tag, elEmptyCart, emptyCartText, emptyCartIcon;
           var totalCost = 0;
           for(i = 0; i < numberOfItems; i++){
             // - "div.cartItem"
@@ -611,17 +612,18 @@ app.loadCartPage = function(){
             // -- "div.sale"
             elDivSale = document.createElement('div');
             elDivSale.setAttribute('class', 'sale');
-            elDivCartItem.appendChild(elDivSale)
+            elDivCartItem.appendChild(elDivSale);
             
             // --- "div.price"
             elDivPrice = document.createElement('div');
-            elDivPrice.setAttribute('class', 'price')
+            elDivPrice.setAttribute('class', 'price');
             elPTag = document.createElement('p');
-            tag = document.createTextNode('Unit Price')
-            elPTag.appendChild(tag)
+            tag = document.createTextNode('Unit Price');
+            elPTag.appendChild(tag);
             elPPrice = document.createElement('p');
-            price = document.createTextNode(`$ ${cartItems[i].item.price}`)
-            elPPrice.appendChild(price)
+            elPPrice.setAttribute('id', `price${cartItems[i].item.id}`);
+            price = document.createTextNode(`$ ${cartItems[i].item.price}`);
+            elPPrice.appendChild(price);
             elDivPrice.appendChild(elPTag);
             elDivPrice.appendChild(elPPrice);
             elDivSale.appendChild(elDivPrice);
@@ -630,8 +632,8 @@ app.loadCartPage = function(){
             elDivQuantity = document.createElement('div');
             elDivQuantity.setAttribute('class', 'quantity');
             elPTag = document.createElement('p');
-            tag = document.createTextNode('Quantity')
-            elPTag.appendChild(tag)
+            tag = document.createTextNode('Quantity');
+            elPTag.appendChild(tag);
             elNumberInput = document.createElement('input');
             elNumberInput.setAttribute('type', 'number');
             elNumberInput.setAttribute('id', `quantity${cartItems[i].item.id}`);
@@ -656,7 +658,15 @@ app.loadCartPage = function(){
           var totalDiv = document.querySelector('.checkout .total > div');
           totalDiv.textContent = `Total Cost: $ ${totalCost}`;
         }else{
-          // @TODO
+          // Empty cart
+          elEmptyCart = document.createElement('div');
+          elEmptyCart.setAttribute('class', 'emptyCart');
+          emptyCartIcon = document.createElement('i');
+          emptyCartIcon.setAttribute('class', 'fab fa-opencart');
+          emptyCartText = document.createTextNode('  Your cart is empty');
+          emptyCartIcon.appendChild(emptyCartText);
+          elEmptyCart.appendChild(emptyCartIcon);
+          container.appendChild(elEmptyCart);
         }
       }else{
         // If the request comes back as something other than 200, log the user out (on the assumption that the api is temporarily down or the users token is bad)
@@ -726,6 +736,20 @@ app.addToCart = function(){
                 }else{
                   var divCartItem = document.getElementById(id);
                   divCartItem.style.display = 'none';
+                  // calculate new total cost
+                  var totalCostDiv = document.querySelector('.checkout .total > div');
+                  var currentDivPrice = document.querySelector(`#price${id}`);
+                  var currentDivQuantity = document.querySelector(`#quantity${id}`);
+                  if(totalCostDiv && currentDivPrice && currentDivQuantity){
+                    var totalBillable = totalCostDiv.textContent.replace('Total Cost: $ ','');
+                    totalBillable *= 1;
+                    var deductibleAmount = currentDivPrice.textContent.replace('$ ','');
+                    deductibleAmount *= 1;      
+                    var quantity = currentDivQuantity.value;
+                    quantity *= 1;          
+                    totalBillable -= deductibleAmount * quantity;
+                    totalCostDiv.textContent = `Total Cost: $ ${totalBillable}`;
+                  }
                 }
               }else{
                 // Error
@@ -766,15 +790,12 @@ app.modifyCart = function(){
         }
         app.client.request(undefined, 'api/cart', 'PUT', undefined, payload, function(statusCode, responsePayload){
           if(statusCode == 200){
-            // @TODO
-            console.log(statusCode)
+            window.location = '/cart';
           }else{
-            // @TODO
-            console.log(statusCode);
+            window.alert('Something went wrong, could not change quantity');
           }
         });
       }else{
-        // @TODO
         console.log('corresponding button missing, id:', id);
       }
     }else{
@@ -804,12 +825,13 @@ app.checkout = function(){
                 var stripe = Stripe('pk_test_51IJG3JCNlIgCXQydYsydKwVqZUpQVwvZIuXWjO1xQMZ2vkaSIpp8MEVSk31eWfexTj4nHcTcmDAsUaH1Myuj9ykT00hmvS6TaI');
                 return stripe.redirectToCheckout({ sessionId: responsePayload.id });
               }catch(err){
-                // @TODO
+                window.alert('Redirect to Stripe Payments failed')
                 console.log(err.error.message);
               }
             }
           }else{
-            // @TODO
+            window.alert('Checkout attempt failed')
+            console.log(statusCode)
           }
         });
       }else{
