@@ -163,6 +163,10 @@
 		color: var(--ivory);
 		font-size: var(--sm-font);
 	}
+	.inputWrapper > button:hover{
+		background-color: var(--ivory);
+		color: var(--green);
+	}
 	.inputLabel{
 		width: 90%;
 		padding: 4px 1px;
@@ -360,6 +364,7 @@
 		color: var(--ivory);
 	}
 	button#checkout:hover{
+		cursor: pointer;
 		background-color: var(--tigerLily);
 		color: var(--ivory);
 	}
@@ -375,6 +380,15 @@
 		margin: 4px 0;
 		font-size: 0.8rem;
 		border-radius: 2px;
+	}
+	button.addToCart:hover, button.removeFromCart:hover{
+		cursor: pointer;
+	}
+	button.addToCart:hover{
+		background-color: var(--tigerLily);
+	}
+	button.removeFromCart:hover{
+		background-color: var(--ivory);
 	}
 	button.addToCart{
 		background-color: var(--green);

@@ -162,11 +162,11 @@ app.bindForms = function(){
             if(nameOfElement == '_method'){
               method = valueOfElement;
             } else {
-              // Create an payload field named "method" if the elements name is actually httpmethod
+              // Create a payload field named "method" if the elements name is actually httpmethod
               if(nameOfElement == 'httpmethod'){
                 nameOfElement = 'method';
               }
-              // Create an payload field named "id" if the elements name is actually uid
+              // Create a payload field named "id" if the elements name is actually uid
               if(nameOfElement == 'uid'){
                 nameOfElement = 'id';
               }
@@ -812,6 +812,13 @@ app.checkout = function(){
     var checkoutBtn = document.querySelector('button#checkout');
     checkoutBtn.addEventListener('click', function(e){
       e.preventDefault();
+      // Add a spinner
+      let spinnerIcon = document.createElement('i');
+      spinnerIcon.setAttribute('class', 'fas fa-spinner fa-spin')
+      let y = checkoutBtn.childNodes[0]
+      checkoutBtn.removeChild(y)
+      checkoutBtn.appendChild(spinnerIcon)
+      checkoutBtn.style.cursor = 'progress'
       // Get the email address from the current token, or log the user out if none is there
       var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
       if(email){
@@ -826,12 +833,10 @@ app.checkout = function(){
                 return stripe.redirectToCheckout({ sessionId: responsePayload.id });
               }catch(err){
                 window.alert('Redirect to Stripe Payments failed')
-                console.log(err.error.message);
               }
             }
           }else{
             window.alert('Checkout attempt failed')
-            console.log(statusCode)
           }
         });
       }else{
