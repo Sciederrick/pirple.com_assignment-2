@@ -229,7 +229,7 @@
 	.sessionCreate .formWrapper{
 		height: 60%;
 	}
-	.sessionDeleted .menu, .sessionDeleted button.bars{
+	.sessionDeleted .menu, .sessionDeleted button.bars, .stripeSuccess .menu, .stripeSuccess button.bars, .stripeCancel .menu, .stripeCancel button.bars{
 		display: none;
 	}
 	.sessionDeleted .ctaWrapper{
@@ -412,6 +412,17 @@
 	.shoppingCart .checkout .total > div{
 		font-family: monospace;
 		font-weight: bold;
+	}
+	.stripeSuccess, .stripeCancel{
+		background-color: var(--ivory);
+		display: flex;
+		justify-content: center;
+		align-content: center;
+		text-align: center;
+		height: 60vh;
+	}
+	a.continueShopping{
+		color: var(--green);
 	}
 	
 	@media only screen and (min-width: 600px) {
